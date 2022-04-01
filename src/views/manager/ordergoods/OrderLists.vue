@@ -14,38 +14,54 @@
     <el-table-column type="selection"></el-table-column>
       <el-table-column label="#" type="index" class="indexFrom"></el-table-column>
     <el-table-column
-      prop="date"
-      label="创建日期"
+      prop="_id"
+      label="账户ID"
+      width="330">
+    </el-table-column>
+    <el-table-column
+      prop="firstname"
+      label="账户名称"
       width="180">
-      2021/1/22
     </el-table-column>
     <el-table-column
-      prop="name"
-      :label="firstname"
-      width="180">
+      prop="shopsid"
+      label="商品ID"
+      width="330">
     </el-table-column>
     <el-table-column
-      prop="password"
-      label="密码"
-      width="180">******
-    </el-table-column>
-    <el-table-column
-      prop="shoptitle"
-      label="商品信息"
-      width="320">
-    </el-table-column>
-    <el-table-column
-      prop="address"
-      label="商品"
-      width="350">
+      prop="shopnums"
+      label="购买数量"
+      width="250">
     </el-table-column>
     <el-table-column
       prop="controls"
       label="操作" v-slot="{row}" width="230">
-      <el-button type="primary" style="width:80px;font-size:18px" @click="goto(row._id)">编辑</el-button>
-      <el-button type="danger" @click="delsingle(row._id)" style="width:80px;font-size:18px">删除</el-button>
+      <el-button type="primary" style="width:80px;font-size:18px" @click="goto(row.shopsid,row.firstname,row.shopnums)">编辑</el-button>
+      <!-- 删除 -->
+   <el-button type="danger" @click="delsingle(row._id)" style="width:80px;font-size:18px">删除</el-button>
     </el-table-column>
   </el-table>
+  <!-- 点击编辑弹出内容 -->
+  <el-dialog title="订单详情" :visible.sync="dialogFormVisible" style="marginTop:'30px'">
+  <el-form :model="form">
+    <el-form-item label="账户名称" :label-width="formLabelWidth">
+      <el-input v-model="form.firstname" autocomplete="off"></el-input>
+    </el-form-item>
+    <el-form-item label="图片地址" :label-width="formLabelWidth">
+      <el-input v-model="form.shopimgs" type="textarea" autocomplete="off"></el-input>
+    </el-form-item>
+     <el-form-item label="商品信息" :label-width="formLabelWidth">
+      <el-input v-model="form.shoptitle" autocomplete="off"></el-input>
+    </el-form-item>
+     <el-form-item label="商品数量" :label-width="formLabelWidth">
+      <el-input v-model="form.shopnums" autocomplete="off"></el-input>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisible = false">取 消 编 辑</el-button>
+    <el-button type="primary" @click="sureToEdit(form)">确 定 编 辑</el-button>
+  </div>
+</el-dialog>
   <!-- 分页器 -->
    <el-pagination
       @size-change="changeSize"
@@ -66,19 +82,19 @@ export default {
       data() {
            const {page=1,size=5} = this.$route.query;
       return {
-        tableData: [
-         {
-          date: '2016-05-04',
-          name: '王小虎',
-           password:"wonendie",
-          address: '上海市普陀区金沙江路 1518 弄',
-          shoptitle:"小黄人"
-        },
-        ],
+        tableData: [],
+        dialogFormVisible:false,
         total:0,
         page,
-        size
-      } 
+        size,
+        form: {
+         firstname:"",
+         shoptitle:"",
+         shopnums:"",
+         shopimgs:""
+        },
+        formLabelWidth: '120px',
+      }
     },
     created(){
       this.getdata();
@@ -116,10 +132,52 @@ export default {
         }
       })
      this.tableData = data.userinfos
-     console.log("joo",this.tableData);
-    }
+    //  console.log("joo",this.tableData);
     },
-    
+    goto(id,firstname,shopnums){
+      // 编辑区显隐
+      this.dialogFormVisible = !this.dialogFormVisible;
+      this.form.firstname = firstname;
+      this.form.shopnums = shopnums;
+        this.$request.get("/goods/"+id).then(({data})=>{
+          // console.log("当前商品",data);
+          this.form.shoptitle = data.msg[0].title;
+          this.form.shopimgs = data.msg[0].img;
+        }).catch((err)=>{console.log(err);})
+    },
+    deleteData(){
+      this.$request.delete("/prders/")
+    },
+    delsingle(id){
+      // console.log("要删除的id值",id);
+      this.$confirm('确认删除此订单？')
+          .then(()=>{
+            this.$request.delete("/orders/"+id).then((data)=>{
+              console.log("删除结果",data);
+              if(data.code===200){
+                 this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });     
+          this.getdata()
+              }else{
+                 this.$message({
+            type: 'error',
+            message: '失败!'
+          });     
+              }
+            })
+          })
+          .catch((err)=>{console.log(err);});
+      
+    },
+    // 确认编辑
+    // sureToEdit(value){
+    //   this.dialogFormVisible = !this.dialogFormVisible;
+    //   // console.log("当前需要编辑后的内容·",value.firstname);
+    //   const {data} = this.$request.put("/orders/"+id,{})
+    // }
+    },
 }
 </script>
 

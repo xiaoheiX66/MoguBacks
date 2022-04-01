@@ -45,8 +45,10 @@ export default {
                        console.log("登陆成功");
                     //    this.$store.commit('addRoute');
                        this.$router.push('/manager/home')
+                       this.$message.success("登陆成功")
                    }else{
                        console.log("登陆失败");
+                       this.$message.error("用户名或密码错误!")
                    }    
                 }
             })

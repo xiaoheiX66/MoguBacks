@@ -73,17 +73,17 @@ export default {
             {
               text: "添加用户",
               path: "/addUser",
-              icon:"el-icon-plus"
+              icon:"el-icon-star-on"
             },
             {
               text: "用户列表",
               path: "/listUser",
-              icon:"el-icon-c-scale-to-original"
+               icon:"el-icon-star-on"
             },
             {
               text: "更新信息",
               path: "/editUser",
-              icon:"el-icon-refresh"
+              icon:"el-icon-star-on"
             }
           ]
         },
@@ -95,18 +95,18 @@ export default {
             {
               text: "添加商品",
               path: "/add",
-              icon:"el-icon-plus"
+               icon:"el-icon-star-on"
             },
             {
               text: "商品列表",
               path: "/list",
-              icon:"el-icon-c-scale-to-original"
+               icon:"el-icon-star-on"
             },
-             {
-              text: "更新商品",
-              path: "/edit",
-              icon:"el-icon-refresh"
-            }
+            //  {
+            //   text: "更新商品",
+            //   path: "/edit",
+            //    icon:"el-icon-star-on"
+            // }
           ]
         },
         {
@@ -117,49 +117,42 @@ export default {
               {
                   text:"添加订单",
                   path:"/orgoods",
-                  icon:"el-icon-plus"
+                   icon:"el-icon-star-on"
               },
               {
                   text:"订单列表",
                   path:"/orderlists",
-                  icon:"el-icon-c-scale-to-original"
+                  icon:"el-icon-star-on"
               }
           ]
         },
-        {
-          text: "广告管理",
-          path: "/advertice",
-          icon: "el-icon-data-board",
-          children: [
-            {
-              text: "添加广告",
-              path: "/adds",
-              icon:"el-icon-plus"
-            },
-            {
-              text: "广告列表",
-              path: "/list",
-              icon:"el-icon-c-scale-to-original"
-            }
-          ]
-        },
+        // {
+        //   text: "广告管理",
+        //   path: "/advertice",
+        //   icon: "el-icon-data-board",
+        //   children: [
+        //     {
+        //       text: "添加广告",
+        //       path: "/adds",
+        //        icon:"el-icon-star-on"
+        //     },
+        //     {
+        //       text: "广告列表",
+        //       path: "/list",
+        //        icon:"el-icon-star-on"
+        //     }
+        //   ]
+        // },
         {
           text: "角色权限",
           path: "/access",
           icon: "el-icon-key",
           children: [
             {
-              text: "添加角色",
-              path: "/add"
+              text: "后续更新",
+              path: "/add",
+               icon:"el-icon-star-on"
             },
-            {
-              text: "角色列表",
-              path: "/list"
-            },
-            {
-              text: "权限指派",
-              path: "/set"
-            }
           ]
         }
       ],

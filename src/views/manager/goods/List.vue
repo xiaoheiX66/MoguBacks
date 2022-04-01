@@ -60,10 +60,10 @@
         <el-button type="primary" size="50px" style="margin-left:60px" @click="changeStateBu(row._id)">{{isUnderCarrige?"上架":"下架"}}</el-button>
       </el-table-column>
        <el-table-column 
-       label="销量"
+       label="已售"
        v-slot="{row}"
        >
-       <p>{{row.cfav}}</p>
+       <p>{{row.sale}}</p>
        </el-table-column>
       <el-table-column
         label="操作"
@@ -74,6 +74,36 @@
       </el-table-column>
      </template>
     </el-table>
+    <!-- 点击弹出内容 -->
+    <el-dialog title="收货地址" :visible.sync="dialogFormVisible" style="marginTop:'20px'">
+  <el-form :model="form">
+    <el-form-item label="商品名称" :label-width="formLabelWidth">
+      <el-input v-model="form.title" autocomplete="off" placeholder="商品名称"></el-input>
+    </el-form-item>
+     <el-form-item label="商品分类" :label-width="formLabelWidth">
+      <el-input v-model="form.category" autocomplete="off" placeholder="商品分类"></el-input>
+    </el-form-item>
+    <el-form-item label="图片地址" :label-width="formLabelWidth">
+      <el-input v-model="form.img" type="textarea" autocomplete="off" placeholder="图片地址"></el-input>
+    </el-form-item>
+     <el-form-item label="现价/原价/销量/已售" :label-width="formLabelWidth">
+      <el-input v-model="form.formalPrice" autocomplete="off" placeholder="原价"></el-input>
+      <el-input v-model="form.price" autocomplete="off" placeholder="现价"></el-input>
+      <el-input v-model="form.cfav" autocomplete="off" placeholder="销量"></el-input>
+      <el-input v-model="form.sale" autocomplete="off" placeholder="已售"></el-input>
+    </el-form-item>
+     <el-form-item label="商品描述" :label-width="formLabelWidth">
+      <el-input v-model="form.desc" autocomplete="off" placeholder="商品描述"></el-input>
+    </el-form-item>
+     <el-form-item label="是否上架" :label-width="formLabelWidth">
+      <el-input v-model="form.hasSimilarity" autocomplete="off" placeholder="是否上架"></el-input>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisible = false">取 消 编 辑</el-button>
+    <el-button type="primary" @click="sureToEdit(form)">确 定 编 辑</el-button>
+  </div>
+</el-dialog>
     <el-pagination
       @size-change="changeSize"
       @current-change="changePage"
@@ -94,12 +124,25 @@ export default {
         return{
             tableData:[],
             isUnderCarrige:true,
+            dialogFormVisible:false,
             searchResult:[],
             newInfosAll:[],
             page,
             size,
             total:0,
             input2:'',
+             form: {
+               tradeItemId:7,
+         title:"",
+        img:"",
+        category: "时尚clthes",
+        itemtype: "",
+        hasSimilarity:false,
+        cfav:"",
+        price:"",
+        sale:"",
+        formalPrice:'￥999'
+        },
         }
     },
     created() {
@@ -163,7 +206,20 @@ export default {
         })
       },
       goto(id){
-        this.$router.push("/manager/goods/edit?id="+id)
+        console.log("id",id);
+        localStorage.setItem("singleupdateId",JSON.stringify(id))
+        // this.$router.push("/manager/goods/edit?id="+id)
+        this.dialogFormVisible = !this.dialogFormVisible
+        this.$request.get("/goods/"+id).then(({data})=>{
+          console.log("详情id",data);
+          this.form.title = data.msg[0].title
+    this.form.desc = data.msg[0].tradeItemId
+    this.form.hasSimilarity = data.msg[0].hasSimilarity
+    this.form.cfav =data.msg[0].cfav
+    this.form.price =data.msg[0].price
+    this.form.sale =data.msg[0].sale
+    this.form.img = data.msg[0].img
+        }).catch((err)=>{console.log(err);})
       },
       // 上下架
       async changeStateBu(id){
@@ -186,6 +242,20 @@ export default {
         this.tableData = this.searchResult;
         this.input2=""
         console.log("搜索后的结果",this.searchResult);
+      },
+      sureToEdit(values){
+        console.log("表单数据",values);
+        const id = JSON.parse(localStorage.getItem("singleupdateId"))
+        this.$request.put("/goods/"+id,this.form).then(({data})=>{
+          console.log("更新结果",data);
+          if(data.code===200){
+            this.$message.success("更新成功")
+          }else{
+            this.$message.error("更新失败")
+          }
+        }).catch((err)=>{console.log(err);})
+        setTimeout(()=>{this.getData()},500)
+          this.dialogFormVisible = false;
       }
   }
 }

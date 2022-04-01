@@ -43,6 +43,24 @@
       <el-button type="danger" @click="delsingle(row._id)" style="width:80px;font-size:18px">删除</el-button>
     </el-table-column>
   </el-table>
+   <!-- 点击弹出内容 -->
+    <el-dialog title="账户详情" :visible.sync="dialogFormVisible" style="marginTop:'20px'">
+  <el-form :model="form">
+    <el-form-item label="账户ID" :label-width="formLabelWidth">
+      <el-input v-model="form._id" autocomplete="off" placeholder="账户ID" disabled></el-input>
+    </el-form-item>
+     <el-form-item label="账户名称" :label-width="formLabelWidth">
+      <el-input v-model="form.username" autocomplete="off" placeholder="账户名称"></el-input>
+    </el-form-item>
+    <el-form-item label="账户密码" :label-width="formLabelWidth">
+      <el-input v-model="form.password" autocomplete="off" placeholder="账户密码"></el-input>
+    </el-form-item>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisible = false">取 消 编 辑</el-button>
+    <el-button type="primary" @click="sureToEdit(form)">确 定 编 辑</el-button>
+  </div>
+</el-dialog>
   <!-- 分页器 -->
    <el-pagination
       @size-change="changeSize"
@@ -65,7 +83,13 @@ export default {
         tableData: [],
         total:0,
         page,
-        size
+        size,
+        dialogFormVisible:false,
+        form:{
+          _id:"",
+          username:"",
+          password:""
+        }
       }
     },
      created(){
@@ -109,8 +133,16 @@ export default {
         })
         
       },
-      goto(id){
-          this.$router.push("/manager/user/editUser?id="+id)
+      goto(_id){
+        console.log("id",_id);
+          // this.$router.push("/manager/user/editUser?id="+id)
+          this.dialogFormVisible = !this.dialogFormVisible
+          this.$request.get("/user/"+_id).then(({data})=>{
+            console.log("单个人信息",data);
+            this.form._id = data.info[0]._id
+            this.form.username = data.info[0].username
+            this.form.password = data.info[0].password
+          }).catch((err)=>{console.log(err);})
         // console.log("id",id);
       },
       changeSize(size){
@@ -130,6 +162,22 @@ export default {
             query:{...this.$route.query,page}
         })
     },
+    sureToEdit(values){
+      const id = values._id
+      const username = values.username
+      const password = values.password
+      console.log("提交的数据",values);
+      this.$request.put("/user/"+id,{username,password}).then(({data})=>{
+        console.log("更新结果",data);
+        if(data.code===200){
+          this.$message.success("更新成功")
+        }else{
+          this.$message.error("更新失败")
+        }
+      }).catch((err)=>{console.log(err);})
+      this.dialogFormVisible = false
+      setTimeout(()=>{this.getUserInfos()},500)
+    }
     },
 }
 </script>

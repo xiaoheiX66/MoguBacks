@@ -16,24 +16,8 @@
       <el-option v-for="item in categories" :key="item._id" :label="item.text" :value="item.text"></el-option>
     </el-select>
   </el-form-item>
-    <el-form-item label="商品图片" style="display:flex">
-        <el-upload
-            ref="uploadForm"
-            name="goods"
-            :action="$host+'/api/upload/goods'"
-            list-type="picture-card"
-            :auto-upload="false"
-            :http-request="uploadFile"
-            >
-                <i class="el-icon-plus"></i>
-                <template v-slot:file="{file}">
-                    <img
-                        class="el-upload-list__item-thumbnail"
-                        :src="file.img" alt=""
-                    >
-                </template>
-            </el-upload>
-
+    <el-form-item label="商品图片" >
+<el-input v-model="form.img" type="textarea" placeholder="商品图片地址"></el-input>
     </el-form-item>
      <el-form-item label="原价">
     <el-col :span="4">
@@ -41,7 +25,7 @@
     </el-col>
     <el-col class="line" :span="2" style="text-align:right;padding-right:5px;">现价</el-col>
     <el-col :span="4">
-      <el-input v-model.number="form.price" placeholder="现价"></el-input>
+      <el-input v-model="form.price" placeholder="现价"></el-input>
     </el-col>
      <el-col class="line" :span="2" style="text-align:right;padding-right:5px;">销量</el-col>
     <el-col :span="4">
@@ -59,7 +43,7 @@
     <el-switch v-model="form.hasSimilarity"></el-switch>
   </el-form-item>
   <el-form-item style="display:flex">
-    <el-button type="primary" @click="onSubmit" size="medium" style="width:1650px;font-size:17px">添加</el-button>
+    <el-button type="primary" @click="onSubmit(form)" size="medium" style="width:1650px;font-size:17px">添加</el-button>
   </el-form-item>
 </el-form>
 <!-- <el-dialog :visible.sync="dialogVisible">
@@ -75,8 +59,9 @@ export default {
         goodsid:'',
       form: {
         title: "",
+        img:"",
         category: "鞋子",
-        desc: "",
+        desc:"备货中...",
         hasSimilarity: false,
         cfav:"",
         price:'',
@@ -103,7 +88,8 @@ export default {
      
   },
   methods: {
-    onSubmit() {
+    onSubmit(values) {
+      console.log("当前添加的内容",values);
       // 添加商品 -> 拿到商品id -> 上传图片
       this.$refs.form.validate(async valid => {
         if (valid) {
@@ -112,7 +98,7 @@ export default {
           this.goodsid = data.msg[data.msg.length-1]._id
 
           // 上传图片
-          this.$refs.uploadForm.submit();
+          // this.$refs.uploadForm.submit();
           if(data.code===200){
              this.$message({
                 message: '添加成功',
