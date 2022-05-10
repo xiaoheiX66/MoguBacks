@@ -11,15 +11,15 @@
     <el-col :span="9">
       <div class="grid-content bg-purple" style="margin-top: 10px;">
   <el-input placeholder="请输入内容" v-model="input2" @change="searchAction($event)">
-    <template slot="append">搜索</template>
+    <template slot="append" ><el-button type="primary"  class="changeButton">搜索</el-button></template>
   </el-input>
       </div></el-col>
     <el-col :span="12" style="margin-top: 10px;float:right">
-     <el-button class="changeButton" type="primary" plain round>导入</el-button>
-     <el-button class="changeButton" type="primary" plain round>导出</el-button>
-     <el-button class="changeButton" type="primary" round>批量上架</el-button>
-     <el-button class="changeButton" type="primary" round>批量下架</el-button>
-     <el-button class="changeButton" type="danger" round>批量删除</el-button>
+     <el-button class="changeButton" type="primary" plain round disabled>导入</el-button>
+     <el-button class="changeButton" type="primary" plain round disabled>导出</el-button>
+     <el-button class="changeButton" type="primary" round disabled>批量上架</el-button>
+     <el-button class="changeButton" type="primary" round disabled>批量下架</el-button>
+     <el-button class="changeButton" type="danger" round disabled>批量删除</el-button>
       <div class="grid-content bg-purple">
       
       </div></el-col>
