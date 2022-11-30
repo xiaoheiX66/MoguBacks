@@ -9,7 +9,7 @@
 ## git仓库地址
 * https://github.com/gzh52110/MushroomStreet/
 ## 团队与分工
-* 负责人：许男，团队成员：林祖壬
+* 负责人：许男
 * 内容模块说明：
   * 登录页面
    * 登录token校验，7天免登录
